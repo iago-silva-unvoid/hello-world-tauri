@@ -9,7 +9,7 @@ name: Release Tauri Apps
 
 # Added for testing purposes
 on:
-  pull_request:
+  push:
     branches: [main]
 
 jobs:
