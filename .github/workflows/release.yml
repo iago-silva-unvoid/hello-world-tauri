@@ -28,7 +28,7 @@ jobs:
             args: ''
             # Android build
           - platform: 'ubuntu-22.04'
-            args: '--verbose --apk'
+            args: ''
             android: true
           - platform: 'windows-latest'
             args: ''
@@ -39,6 +39,31 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Available space before cleaning
+        shell: bash
+        run: du -sh /
+
+      - name: Free Disk Space (Ubuntu)
+        if: ${{matrix.android}} == true
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Available space after cleaning
+        shell: bash
+        run: du -sh /
 
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
