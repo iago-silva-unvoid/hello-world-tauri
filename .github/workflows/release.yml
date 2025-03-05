@@ -41,8 +41,9 @@ jobs:
           fetch-depth: 0
 
       - name: Available space before cleaning
+        if: ${{matrix.android}} == true
         shell: bash
-        run: du -sh /
+        run: sudo du -sh /
 
       - name: Free Disk Space (Ubuntu)
         if: ${{matrix.android}} == true
@@ -62,8 +63,9 @@ jobs:
           swap-storage: true
 
       - name: Available space after cleaning
+        if: ${{matrix.android}} == true
         shell: bash
-        run: du -sh /
+        run: sudo du -sh /
 
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
