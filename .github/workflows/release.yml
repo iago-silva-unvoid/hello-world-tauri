@@ -118,8 +118,6 @@ jobs:
           tagName: app-v__VERSION__ # __VERSION__ is replaced with the app version.
           releaseName: 'App v__VERSION__'
           releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
           mobile: ${{ matrix.android }}
-          includeDebug: true
-          prerelease: false
+          includeRelease: true
           args: ${{ matrix.args }}
