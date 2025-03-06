@@ -28,7 +28,7 @@ jobs:
             args: ''
             # Android build
           - platform: 'ubuntu-22.04'
-            args: '--apk'
+            args: ''
             android: true
           - platform: 'windows-latest'
             args: ''
