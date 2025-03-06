@@ -102,14 +102,14 @@ jobs:
           ndk-version: r26d
           link-to-sdk: true
 
-      - name: init android
+      - name: Init android
         if: matrix.android
         env:
           NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           npm run tauri android init
 
-      - name: setup Android signing
+      - name: Setup Android signing
         if: matrix.android
         run: |
           cd src-tauri/gen/android
@@ -121,7 +121,7 @@ jobs:
       - name: Edit build.gradle.kts file
         if: matrix.android
         run: |
-          cd src-tauri/gen/android
+          cd src-tauri/gen/android/app
           sed -i '1i import java.io.FileInputStream;' ./build.gradle.kts
 
           sed -i '/buildTypes {/i\
@@ -140,6 +140,12 @@ jobs:
                   }\
               }' ./build.gradle.kts
               sed -i '/getByName("release") {/a\ \ \ \ \ \ \ \ signingConfig = signingConfigs.getByName("release")' ./build.gradle.kts
+
+      - name: Print content
+        if: matrix.android
+        run: |
+          cd src-tauri/gen/android
+
       - uses: tauri-apps/tauri-action@mobile
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
