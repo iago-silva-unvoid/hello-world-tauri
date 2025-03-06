@@ -110,6 +110,7 @@ jobs:
           npm run tauri android init
 
       - name: setup Android signing
+        if: matrix.android
         run: |
           cd src-tauri/gen/android
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
@@ -118,6 +119,7 @@ jobs:
           echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
 
       - name: Edit build.gradle.kts file
+        if: matrix.android
         run: |
           cd src-tauri/gen/android
           sed -i '1i import java.io.FileInputStream;' ./build.gradle.kts
