@@ -109,6 +109,35 @@ jobs:
         run: |
           npm run tauri android init
 
+      - name: setup Android signing
+        run: |
+          cd src-tauri/gen/android
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
+          echo "password=${{ secrets.ANDROID_KEY_PASSWORD }}" >> keystore.properties
+          base64 -d <<< "${{ secrets.ANDROID_KEY_BASE64 }}" > $RUNNER_TEMP/keystore.jks
+          echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
+
+      - name: Edit build.gradle.kts file
+        run: |
+          cd src-tauri/gen/android
+          sed -i '1i import java.io.FileInputStream;' ./build.gradle.kts
+
+          sed -i '/buildTypes {/i\
+              signingConfigs {\
+                  create("release") {\
+                      val keystorePropertiesFile = rootProject.file("keystore.properties")\
+                      val keystoreProperties = Properties()\
+                      if (keystorePropertiesFile.exists()) {\
+                          keystoreProperties.load(FileInputStream(keystorePropertiesFile))\
+                      }\
+          \
+                      keyAlias = keystoreProperties["keyAlias"] as String\
+                      keyPassword = keystoreProperties["password"] as String\
+                      storeFile = file(keystoreProperties["storeFile"] as String)\
+                      storePassword = keystoreProperties["password"] as String\
+                  }\
+              }' ./build.gradle.kts
+              sed -i '/getByName("release") {/a\ \ \ \ \ \ \ \ signingConfig = signingConfigs.getByName("release")' ./build.gradle.kts
       - uses: tauri-apps/tauri-action@mobile
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
